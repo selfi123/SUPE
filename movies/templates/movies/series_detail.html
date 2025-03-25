@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ series.name }} - Watch Online</title>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
+    <style>
+        /* Reset and Box-Sizing */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Background Canvas */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            animation: slideIn 1s ease-out;
+        }
+        @keyframes slideIn {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(0); }
+        }
+        header h1 {
+            color: #f39c12;
+            font-size: 2.5vw;
+            margin: 0;
+            background: linear-gradient(45deg, #ff6f61, #f39c12);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Container Layout */
+        .container {
+            display: flex;
+            align-items: flex-start;
+            padding: 30px;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        /* Poster Section */
+        .poster-section {
+            width: 25%;
+            min-width: 200px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: auto;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        .poster-section img {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+        .poster-section img:hover {
+            transform: scale(1.05);
+        }
+        .watch-now-btn {
+            display: block;
+            margin: 25px auto;
+            background: linear-gradient(90deg, #f39c12, #ff6f61);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.5vw;
+            font-weight: bold;
+            border-radius: 50px;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        .watch-now-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Info Section */
+        .info-section {
+            width: 70%;
+            min-width: 300px;
+        }
+        .info-section h1 {
+            font-size: 2.5vw;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+        .info-section p {
+            font-size: 1vw;
+            line-height: 1.6;
+            color: #ccc;
+            margin: 10px 0;
+        }
+        .genres .genre {
+            display: inline-block;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            color: #fff;
+            padding: 8px 12px;
+            margin-right: 10px;
+            border-radius: 5px;
+            font-size: 1vw;
+        }
+
+        /* Swiper */
+        .swiper {
+            width: 100%;
+            height: 60vh;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            margin-top: 20px;
+        }
+        .swiper-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .swiper-slide iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Stream Service Section */
+        .stream_service {
+            text-align: center;
+            margin: 40px auto;
+            max-width: 97%;
+            background: rgba(36, 49, 51, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            display: none;
+            animation: fadeIn 1s ease-out;
+        }
+        .stream_service iframe {
+            width: 100%;
+            height: 700px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .server-buttons {
+            margin-top: 20px;
+        }
+        .server-button {
+            background: linear-gradient(90deg, #43cea2, #185a9d);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .server-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Season/Episode Selector */
+        .season-episode-selector {
+            margin: 20px 0;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+
+        }
+        .season-episode-selector.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .season-episode-selector select {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 2px solid #f39c12;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Style the drop-down options */
+.season-episode-selector select option {
+    background-color: #343a40; /* Change this to your desired background color */
+    color: #f39c12;           /* Change this to your desired font color */
+}
+
+/* Optional: Style hovered options */
+.season-episode-selector select option:hover {
+    background-color: #2c2c2c;
+    color: #ff6f61;
+}
+
+        /* Stream Container */
+        .stream-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .stream-player {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .stream-player iframe {
+            width: 100%;
+            height: 700px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Episode Menu */
+        .episode-menu {
+            width: 30%;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 700px;
+        }
+        .episode-menu h2 {
+            font-size: 1.5vw;
+            color: #f39c12;
+            margin-bottom: 20px;
+        }
+        .episode-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: rgba(252, 246, 246, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .episode-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .episode-item img {
+    width: 100px;
+    height: 150px;  /* example fixed height */
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+        .episode-item .episode-info {
+            flex: 1;
+        }
+        .episode-item h3 {
+            font-size: 1vw;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+        .episode-item p {
+            font-size: 0.9vw;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .poster-section {
+                width: 100%;
+                margin: 0 0 20px 0;
+            }
+            .info-section {
+                width: 90%;
+            }
+            .info-section h1 {
+                font-size: 6vw;
+            }
+            .info-section p {
+                font-size: 3.5vw;
+            }
+            .info-section .genre {
+                font-size: 3.5vw;
+            }
+            .watch-now-btn {
+                font-size: 4vw;
+                padding: 5vw 10vw;
+            }
+            header h1 {
+                font-size: 5vw;
+            }
+            .stream-container {
+                flex-direction: column;
+            }
+            .episode-menu {
+                width: 100%;
+                max-height: 300px;
+            }
+            .episode-menu h2 {
+                font-size: 5vw;
+            }
+            .episode-item h3 {
+                font-size: 3.5vw;
+            }
+            .episode-item p {
+                font-size: 3vw;
+            }
+            .stream-player iframe {
+                height: 400px;
+            }
+        }
+
+        /* Canvas */
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(0.3px);
+        }
+
+    </style>
+    <script>
+        const episodeData = {
+            {% for season in seasons %}
+                "{{ season.season_number }}": [
+                    {% for episode in season.episodes %}
+                        {
+                            episode_number: {{ episode.episode_number }},
+                            overview: "{{ episode.overview|escapejs }}",
+                            name: "{{ episode.name|escapejs }}",
+                            still_path: "{{ episode.still_path|default_if_none:'' }}"
+                        }{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ]{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        };
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5983499213977777" crossorigin="anonymous"></script>
+</head>
+<body>
+    <canvas id="canvas" style="position: absolute; top: 0; left: 0; z-index: -1;"></canvas>
+
+    <!-- Header -->
+    <header>
+        <a href="{% url 'series_list' %}" style="display: flex; align-items: center; text-decoration: none;">
+            <img src="https://files.catbox.moe/9kb460.jpeg" alt="Logo" style="width: 4vw; height: auto; border-radius: 50%; margin-right: 1vw;">
+            <h1>SUPE SERIES</h1>
+        </a>
+    </header>
+
+    <!-- Series Info Container -->
+    <div class="container">
+        <div class="poster-section">
+            <img src="https://image.tmdb.org/t/p/w500{{ series.poster_path }}" alt="{{ series.name }} Poster">
+            <a href="javascript:void(0);" class="watch-now-btn" onclick="watchSeries()">Watch Now</a>
+        </div>
+
+        <div class="info-section">
+            <h1>{{ series.name }}</h1>
+            <p><strong>First Air Date:</strong> {{ series.first_air_date }}</p>
+            <p><strong>Overview:</strong> {{ series.overview }}</p>
+            <p><strong>Cast: </strong>
+                {% if series.credits.cast %}
+                    {% for actor in series.credits.cast %}
+                        {{ actor.name }}{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    No cast available.
+                {% endif %}
+            </p>
+            <div class="genres">
+                {% for genre in genres %}
+                    <span class="genre">{{ genre.name }}</span>
+                {% endfor %}
+            </div>
+            <p><strong>Seasons:</strong> {{ series.number_of_seasons }}</p>
+            <p><strong>Episodes:</strong> {{ series.number_of_episodes }}</p>
+
+            <div class="swiper">
+                <div class="swiper-wrapper">
+                    {% if video_keys %}
+                        {% for key in video_keys %}
+                            <div class="swiper-slide">
+                                <iframe src="https://www.youtube.com/embed/{{ key }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="swiper-slide">
+                        <img src="https://image.tmdb.org/t/p/original{{ series.backdrop_path }}" alt="Backdrop Image" loading="lazy">
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-button-prev"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stream Section -->
+    <div class="stream_service">
+        <div class="stream-container">
+            <div class="stream-player">
+                <!-- The iframe for the video stream -->
+                <iframe id="series-iframe" src="" style="display: none;" frameborder="0" referrerpolicy="origin" allowfullscreen></iframe>
+                <!-- Server Buttons -->
+                <div id="server-buttons" class="server-buttons" style="display: none;">
+                    {% for url in stream_urls %}
+                        <button class="server-button" onclick="changeServer('{{ url }}')">Server {{ forloop.counter }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Episode Menu Column -->
+            <div class="episode-menu">
+                <h2>Episodes</h2>
+                <!-- Season/Episode Selector Directly Above Episode List -->
+                <div class="season-episode-selector">
+                    <select id="season-select" onchange="updateEpisodes(); updateEpisodeMenu();">
+                        {% for season in seasons %}
+                            <option value="{{ season.season_number }}">Season {{ season.season_number }}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="episode-select" onchange="updateStream()">
+                        <!-- Episodes will be populated dynamically -->
+                    </select>
+                </div>
+
+                <div id="episode-list">
+                    <!-- Episode list populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script>
+        const seriesData = {
+            tmdbId: "{{ series.id }}",
+            imdbId: "{{ imdb_id }}"
+        };
+        const seasonsData = {
+            {% for season in seasons %}
+                "{{ season.season_number }}": {{ season.episode_count }}{% if not forloop.last %},{% endif %}
+            {% endfor %}
+        };
+
+        // Populate the Episode <select> when a season is chosen
+        function updateEpisodes() {
+            const seasonSelect = document.getElementById('season-select');
+            const episodeSelect = document.getElementById('episode-select');
+            const season = seasonSelect.value;
+            const episodeCount = seasonsData[season] || 0;
+
+            episodeSelect.innerHTML = '';
+            for (let i = 1; i <= episodeCount; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Episode ${i}`;
+                episodeSelect.appendChild(option);
+            }
+            updateStream();     // Update stream when season changes
+            updateEpisodeMenu(); // Update episode menu
+        }
+
+        // Populate the Episode Menu on the right
+        function updateEpisodeMenu() {
+            const season = document.getElementById('season-select').value;
+            const episodeList = document.getElementById('episode-list');
+            const episodes = episodeData[season] || [];
+
+            episodeList.innerHTML = '';
+            episodes.forEach(episode => {
+                const episodeItem = document.createElement('div');
+                episodeItem.classList.add('episode-item');
+                episodeItem.onclick = () => selectEpisode(season, episode.episode_number);
+
+                const posterUrl = episode.still_path
+                    ? `https://image.tmdb.org/t/p/w200${episode.still_path}`
+                    : 'https://via.placeholder.com/100x150?text=No+Image'; // fallback
+
+                episodeItem.innerHTML = `
+                    <img src="${posterUrl}" alt="${episode.name}">
+                    <div class="episode-info">
+                        <h3>${episode.name} (Episode ${episode.episode_number})</h3>
+                        <p>${episode.overview}</p>
+                    </div>
+                `;
+                episodeList.appendChild(episodeItem);
+            });
+        }
+
+        function selectEpisode(season, episodeNumber) {
+            const seasonSelect = document.getElementById('season-select');
+            const episodeSelect = document.getElementById('episode-select');
+            seasonSelect.value = season;
+            updateEpisodes(); // Ensure episode dropdown is updated
+            episodeSelect.value = episodeNumber;
+            updateStream(); // Update the stream with the selected episode
+        }
+
+        function updateStream() {
+            const iframe = document.getElementById('series-iframe');
+            const season = document.getElementById('season-select').value;
+            const episode = document.getElementById('episode-select').value;
+            const firstStreamUrl = "{{ stream_urls|first }}";
+            let videoUrl = "";
+
+            if (firstStreamUrl.includes('vidsrc.xyz')) {
+                videoUrl = seriesData.imdbId ? `${firstStreamUrl}${seriesData.imdbId}/${season}-${episode}?autoplay=1` : '';
+            } else if (firstStreamUrl.includes('embed.su')) {
+                videoUrl = `${firstStreamUrl}${seriesData.tmdbId}/${season}/${episode}?autoplay=1`;
+            } else if (firstStreamUrl.includes('multiembed')) {
+                videoUrl = seriesData.imdbId ? `${firstStreamUrl}${seriesData.imdbId}&s=${season}&e=${episode}&autoplay=1` : '';
+            } else if (firstStreamUrl.includes('NontonGo')) {
+                videoUrl = seriesData.imdbId ? `${firstStreamUrl}${seriesData.imdbId}/${season}/${episode}?autoplay=1` : '';
+            }
+
+            if (!videoUrl) {
+                console.error("No valid series ID for the streaming service!");
+                return;
+            }
+
+            iframe.src = videoUrl;
+
+            // Update info section for selected episode
+            const titleElement = document.querySelector('.info-section h1');
+            const overviewElement = document.querySelector('.info-section p:nth-of-type(2)');
+            const episodeDataForSeason = episodeData[season];
+            if (episodeDataForSeason) {
+                const episodeInfo = episodeDataForSeason.find(ep => ep.episode_number == episode);
+                if (episodeInfo) {
+                    titleElement.textContent = `${episodeInfo.name} (Season ${season}, Episode ${episode})`;
+                    overviewElement.innerHTML = `<strong>Overview:</strong> ${episodeInfo.overview}`;
+                } else {
+                    titleElement.textContent = `Season ${season}, Episode ${episode}`;
+                    overviewElement.innerHTML = `<strong>Overview:</strong> No description available for Season ${season}, Episode ${episode}.`;
+                }
+            }
+        }
+
+        function watchSeries() {
+            const header = document.querySelector('header');
+            const title = document.querySelector('.info-section h1');
+            const overview = document.querySelector('.info-section p:nth-of-type(2)');
+            const streamService = document.querySelector('.stream_service');
+            const iframe = document.getElementById('series-iframe');
+            const serverButtons = document.getElementById('server-buttons');
+            const selector = document.querySelector('.season-episode-selector');
+
+            if (!header || !title || !overview || !streamService) {
+                console.error("Required elements not found!");
+                return;
+            }
+
+            // Hide the poster & Swiper
+            const allSections = document.querySelectorAll('.swiper, .poster-section');
+            allSections.forEach(section => section.style.display = 'none');
+
+            // Show streaming section
+            header.style.display = 'flex';
+            title.style.display = 'block';
+            overview.style.display = 'block';
+            streamService.style.display = 'block';
+            iframe.style.display = 'block';
+            serverButtons.style.display = 'block';
+            selector.classList.add('active');
+
+            // Initialize with the first episode of the first season
+            updateEpisodes();
+            updateEpisodeMenu();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('canvas'); // Match your canvas ID
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const particles = [];
+        const particleCount = 200; // Fewer particles for a light snow effect
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height, // Start at random heights
+                size: Math.random() * 2 + 1, // Small snowflake size (1-3px)
+                speed: Math.random() * 1 + 0.5, // Gentle falling speed
+                opacity: Math.random() * 0.5 + 0.3, // Slightly translucent
+                drift: (Math.random() - 0.5) * 0.2 // Slight horizontal drift
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas fully for snow
+
+            particles.forEach(p => {
+                // Update position: fall down with slight drift
+                p.y += p.speed;
+                p.x += p.drift;
+
+                // Reset snowflake when it falls off the bottom
+                if (p.y > canvas.height) {
+                    p.y = -p.size; // Start above the top
+                    p.x = Math.random() * canvas.width; // Random x-position
+                }
+
+                // Draw snowflake as a small white circle
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`; // White with opacity
+                ctx.fill();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    });
+
+        // Initialize Swiper
+        var swiper = new Swiper('.swiper', {
+            loop: true,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+        });
+    </script>
+</body>
+</html>

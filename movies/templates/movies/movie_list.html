@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @media (max-width: 768px) {
+            div[style*="grid-template-columns"] {
+                grid-template-columns: repeat(2, minmax(150px, 1fr));
+                gap: 20px;
+            }
+        }
+        @media (max-width: 480px) {
+            div[style*="grid-template-columns"] {
+                grid-template-columns: repeat(3, minmax(150px, 1fr));
+            }
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5983499213977777"
+     crossorigin="anonymous"></script>  
+</head>
+<body style="background-color: #201f1f;">
+
+    <div style="position: relative; text-align: center; padding: 20px 0; background: linear-gradient(180deg, #2b2525 0%, #1e1e1e 100%); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <!-- Left Button (Movies) -->
+            <a href="{% url 'movie_list' %}" style="background-color: {% if request.resolver_match.url_name == 'movie_list' %}#e67e22{% else %}#f39c12{% endif %}; color: white; padding: 10px 25px; font-size: 1.2vw; font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;"
+               onmouseover="this.style.backgroundColor='#e67e22'; this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 12px rgba(0, 0, 0, 0.3)';"
+               onmouseout="this.style.backgroundColor='{% if request.resolver_match.url_name == 'movie_list' %}#e67e22{% else %}#f39c12{% endif %}'; this.style.transform='scale(1)'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.2)';">
+                Movies
+            </a>
+    
+            <!-- Center Title -->
+            <a href="{% url 'movie_list' %}" style="text-decoration: none; display: flex; align-items: center; transition: transform 0.3s ease;">
+                <span style="font-size: 4vw; color: #f39c12; margin-right: 10px;">🎥</span>
+                <h1 style="display: inline-block; font-size: 4vw; font-family: 'Poppins', sans-serif; margin: 0; color: transparent; text-transform: uppercase; font-weight: 700; letter-spacing: 2px; background: linear-gradient(45deg, #ff9e2a, #f39c12); -webkit-background-clip: text; background-clip: text; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: transform 0.3s ease, text-shadow 0.3s ease;">
+                    SUPE
+                </h1>
+                <span style="font-size: 4vw; color: #f39c12; margin-left: 10px;">🎬</span>
+            </a>
+    
+            <!-- Right Button (Series) -->
+            <a href="{% url 'series_list' %}" style="background-color: {% if request.resolver_match.url_name == 'series_list' %}#e67e22{% else %}#f39c12{% endif %}; color: white; padding: 10px 25px; font-size: 1.2vw; font-family: 'Poppins', sans-serif; font-weight: 500; border-radius: 50px; text-decoration: none; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;"
+               onmouseover="this.style.backgroundColor='#e67e22'; this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 12px rgba(0, 0, 0, 0.3)';"
+               onmouseout="this.style.backgroundColor='{% if request.resolver_match.url_name == 'series_list' %}#e67e22{% else %}#f39c12{% endif %}'; this.style.transform='scale(1)'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.2)';">
+                Series
+            </a>
+        </div>
+    
+        <!-- Responsive Adjustments -->
+        <style>
+            @media (max-width: 768px) {
+                div[style*="max-width: 1200px"] {
+                    flex-direction: column;
+                    gap: 15px;
+                }
+                h1 {
+                    font-size: 8vw !important;
+                }
+                span[style*="font-size: 4vw"] {
+                    font-size: 8vw !important;
+                }
+                a[style*="font-size: 1.2vw"] {
+                    font-size: 3vw !important;
+                    padding: 8px 20px !important;
+                }
+                div[style*="max-width: 1200px"] > a:first-child,
+                div[style*="max-width: 1200px"] > a:last-child {
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+        </style>
+    </div>
+    
+        <!-- Responsive Adjustments -->
+        <style>
+            @media (max-width: 768px) {
+                div[style*="max-width: 1200px"] {
+                    flex-direction: column;
+                    gap: 20px;
+                }
+                h1 {
+                    font-size: 8vw !important;
+                }
+                span[style*="font-size: 4vw"] {
+                    font-size: 8vw !important;
+                }
+                div[style*="position: absolute; right: 20px"] {
+                    position: static;
+                    justify-content: center;
+                    margin-top: 10px;
+                }
+                a[style*="font-size: 1.2vw"] {
+                    font-size: 3vw !important;
+                    padding: 8px 20px !important;
+                }
+            }
+        </style>
+    </div>
+    <canvas id="background-canvas"
+    style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1;">
+</canvas>
+    <!-- Navigation Bar -->
+    <nav style="display: flex; align-items: center; background-color: #2b2525; color: white; padding: 20px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); height: 10vh; justify-content: space-between; width: 100%; box-sizing: border-box;">
+        <form action="{% url 'movie_list' %}" method="get" style="display: flex; justify-content: center; align-items: center; width: 60%; position: relative; margin: 0 auto;">
+            <div style="display: flex; width: 100%; position: relative;">
+                <input type="text" name="query" value="{{ request.GET.query }}" placeholder="Search for movies or actors..."
+                       style="width: 100%; padding: 15px 20px; font-size: 1vw; border-radius: 50px; border: 2px solid #f39c12; outline: none; transition: box-shadow 0.3s ease, border-color 0.3s ease; height: 1.5vw;">
+                <button type="submit" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background-color: #f39c12; color: white; border: none; padding: 12px 20px; border-radius: 50px; font-size: 1vw;">
+                    🔍
+                </button>
+            </div>
+            <input type="hidden" id="selectedGenre" name="genre" value="{{ request.GET.genre }}">
+            <input type="hidden" id="selectedYear" name="year" value="{{ request.GET.year }}">
+            <input type="hidden" id="selectedLanguage" name="language" value="{{ request.GET.language }}">
+        </form>
+
+        <div style="flex-shrink: 0; margin-left: 80dvw; width: 2vw; position: absolute;">
+            <input id="colorSlider" type="range" min="0" max="360" step="1"
+                   style="width: 50px; background: linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet); appearance: none; height: 8px; border-radius: 5px; outline: none; cursor: pointer; transform: rotate(90deg);"
+                   oninput="updateColorSlider(this.value)">
+        </div>
+    </nav>
+
+   <!-- Filters Section -->
+<div style="display: flex; justify-content: center; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+    <!-- Genre Dropdown -->
+    <div style="position: relative;" onmouseleave="hideDropdown('genreDropdown')">
+        <button style="background-color: #555; color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;" 
+                onclick="toggleDropdown('genreDropdown')">
+            {% if request.GET.genre %}Genre: {{ request.GET.genre }}{% else %}Genres{% endif %} ▼
+        </button>
+        <div id="genreDropdown" style="display: none; position: absolute; background-color: #f8f9fa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 10px; overflow-y: auto; max-height: 200px; width: 200px; z-index: 100;">
+            <button onclick="selectFilter('genre', '')" style="padding: 10px;">All</button>
+            {% for genre in genres %}
+                <button onclick="selectFilter('genre', '{{ genre }}')" style="padding: 10px;">{{ genre }}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Year Dropdown -->
+    <div style="position: relative;" onmouseleave="hideDropdown('yearDropdown')">
+        <button style="background-color: #555; color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;" 
+                onclick="toggleDropdown('yearDropdown')">
+            {% if request.GET.year %}Year: {{ request.GET.year }}{% else %}Year{% endif %} ▼
+        </button>
+        <div id="yearDropdown" style="display: none; position: absolute; background-color: #f8f9fa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 10px; overflow-y: auto; max-height: 200px; width: 200px; z-index: 100;">
+            <button onclick="selectFilter('year', '')" style="padding: 10px;">All</button>
+            {% for year in unique_year %}
+                <button onclick="selectFilter('year', '{{ year }}')" style="padding: 10px;">{{ year }}</button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Language Dropdown -->
+    <div style="position: relative;" onmouseleave="hideDropdown('languageDropdown')">
+        <button style="background-color: #555; color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease;" 
+                onclick="toggleDropdown('languageDropdown')">
+            {% if request.GET.language %}Language: {{ request.GET.language }}{% else %}Language{% endif %} ▼
+        </button>
+        <div id="languageDropdown" style="display: none; position: absolute; background-color: #f8f9fa; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); border-radius: 10px; overflow-y: auto; max-height: 200px; width: 200px; z-index: 100;">
+            <button onclick="selectFilter('language', '')" style="padding: 10px;">All</button>
+            {% for language in languages %}
+                <button onclick="selectFilter('language', '{{ language }}')" style="padding: 10px;">{{ language }}</button>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+    <!-- Actor Profile Section (simplified, since no DB) -->
+    {% if actor %}
+        <div style="text-align: center; margin-top: 50px;">
+            <h2 style="font-size: 2em; color: #f39c12;">{{ actor }}</h2>
+            <p style="font-size: 1.2em; color: #fff; margin: 20px;">Actor information not available without DB.</p>
+        </div>
+    {% endif %}
+
+    <!-- Inside the movie grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px;">
+    {% for movie in page_obj %}
+    <div class="chosecolor"
+         style="background: linear-gradient(135deg, #f29c11 0%, #dfad09 100%); border-radius: 10px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); text-align: center; transition: all 0.3s ease; padding: 5px;"
+         onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 10px 20px rgba(0, 0, 0, 0.2)';"
+         onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 8px rgba(0, 0, 0, 0.2)';">
+        {% if movie.imdb_id %}
+            <a href="{% url 'movie_detail' imdb_id=movie.imdb_id %}" style="text-decoration: none; color: inherit; display: block;">
+        {% else %}
+            <a href="{% url 'movie_detail_tmdb' tmdb_id=movie.id %}" style="text-decoration: none; color: inherit; display: block;">
+        {% endif %}
+            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}"
+                 style="width: 100%; height: auto; margin-bottom: 15px;">
+            <h2 style="font-size: 18px; margin: 15px 0; font-family: 'Poppins', sans-serif; color: #333; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                {{ movie.title }}
+            </h2>
+
+            <p style="font-size: 16px; font-weight: bold; margin-top: 10px; color: #1b1b1a;">
+                {{ movie.release_date|slice:":4" }}
+            </p>
+            <p style="font-size: 16px; color: #333; margin-top: 5px; font-weight: bold;">
+                Language: {{ movie.original_language }}
+            </p>
+        </a>
+    </div>
+    {% endfor %}
+</div>
+ <!-- Pagination Controls -->
+<div style="text-align: center; margin-top: 20px; padding: 20px; color: wheat;">
+    {% if current_page > 1 %}
+        <a href="?page=1&genre={{ request.GET.genre }}&year={{ request.GET.year }}&language={{ request.GET.language }}&query={{ request.GET.query }}"
+           style="color: #f39c12; text-decoration: none; font-weight: bold; padding: 5px 10px; border: 1px solid #f39c12; border-radius: 5px; transition: background-color 0.3s, color 0.3s;"
+           onmouseover="this.style.backgroundColor='#f39c12'; this.style.color='#fff';"
+           onmouseout="this.style.backgroundColor='transparent'; this.style.color='#f39c12';">
+            First
+        </a>
+        <a href="?page={{ current_page|add:'-1' }}&genre={{ request.GET.genre }}&year={{ request.GET.year }}&language={{ request.GET.language }}&query={{ request.GET.query }}"
+           style="color: #f39c12; text-decoration: none; font-weight: bold; padding: 5px 10px; border: 1px solid #f39c12; border-radius: 5px; transition: background-color 0.3s, color 0.3s;"
+           onmouseover="this.style.backgroundColor='#f39c12'; this.style.color='#fff';"
+           onmouseout="this.style.backgroundColor='transparent'; this.style.color='#f39c12';">
+            Previous
+        </a>
+    {% endif %}
+
+    <span style="font-size: 16px; font-family: 'Poppins', sans-serif; margin: 0 10px;">
+        Page {{ current_page }} of {{ total_pages }}
+    </span>
+
+    {% if current_page < total_pages %}
+        <a href="?page={{ current_page|add:'1' }}&genre={{ request.GET.genre }}&year={{ request.GET.year }}&language={{ request.GET.language }}&query={{ request.GET.query }}"
+           style="color: #f39c12; text-decoration: none; font-weight: bold; padding: 5px 10px; border: 1px solid #f39c12; border-radius: 5px; transition: background-color 0.3s, color 0.3s;"
+           onmouseover="this.style.backgroundColor='#f39c12'; this.style.color='#fff';"
+           onmouseout="this.style.backgroundColor='transparent'; this.style.color='#f39c12';">
+            Next
+        </a>
+        <a href="?page={{ total_pages }}&genre={{ request.GET.genre }}&year={{ request.GET.year }}&language={{ request.GET.language }}&query={{ request.GET.query }}"
+           style="color: #f39c12; text-decoration: none; font-weight: bold; padding: 5px 10px; border: 1px solid #f39c12; border-radius: 5px; transition: background-color 0.3s, color 0.3s;"
+           onmouseover="this.style.backgroundColor='#f39c12'; this.style.color='#fff';"
+           onmouseout="this.style.backgroundColor='transparent'; this.style.color='#f39c12';">
+            Last
+        </a>
+    {% endif %}
+</div>
+
+    <script>
+        function updateColorSlider(value) {
+            const color = `hsl(${value}, 100%, 50%)`;
+            const elements = document.querySelectorAll('.chosecolor');
+            elements.forEach(element => {
+                element.style.background = `linear-gradient(135deg, ${color}, ${color})`;
+            });
+            localStorage.setItem('selectedColor', value);
+        }
+
+        window.addEventListener('load', () => {
+            const savedColor = localStorage.getItem('selectedColor');
+            if (savedColor) {
+                const slider = document.getElementById('colorSlider');
+                if (slider) {
+                    slider.value = savedColor;
+                }
+                updateColorSlider(savedColor);
+            }
+        });
+
+        function toggleDropdown(dropdownId) {
+            var dropdown = document.getElementById(dropdownId);
+            if (dropdown.style.display === "none" || dropdown.style.display === "") {
+                dropdown.style.display = "block";
+            } else {
+                dropdown.style.display = "none";
+            }
+        }
+
+        function hideDropdown(dropdownId) {
+            var dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = "none";
+        }
+
+        function selectFilter(type, value) {
+            document.getElementById('selected' + capitalizeFirstLetter(type)).value = value;
+            document.forms[0].submit();  // Submit the form to apply filters
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        // Background Particle Animation
+        const canvas = document.getElementById('background-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        for (let i = 0; i < 100; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 2 + 1,
+                speed: Math.random() * 0.5 + 0.1
+            });
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                p.y += p.speed;
+                if (p.y > canvas.height) p.y = -p.radius;
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
