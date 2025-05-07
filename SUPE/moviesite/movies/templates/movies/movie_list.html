@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supe MovieTym</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Adsense Script -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5983499213977777" crossorigin="anonymous"></script>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            scroll-behavior: smooth;
+        }
+
+        /* Sticky Header */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: linear-gradient(180deg, #2b2525 0%, #1e1e1e 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            padding: 1rem 0;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: #2b2525;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            border: 2px solid #f39c12;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+        }
+
+        /* Dropdowns */
+        .dropdown-menu {
+            background-color: #2b2525; /* Dark background for visibility */
+            color: #fff; /* White text for contrast */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            width: 200px;
+            z-index: 1000; /* High z-index to overlay content */
+            position: absolute;
+            top: 100%;
+            left: 0;
+        }
+
+        .dropdown-menu button {
+            background-color: #2b2525; /* Match dropdown background */
+            color: #fff; /* White text */
+            border: none;
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-menu button:hover {
+            background-color: #3a3434; /* Slightly lighter dark hover state */
+        }
+
+        /* Movie Grid */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            padding: 1.5rem;
+        }
+
+        .movie-card {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .movie-card h2,
+        .movie-card p {
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+
+        /* Pagination */
+        .pagination a {
+            color: #f39c12;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border: 1px solid #f39c12;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #f39c12;
+            color: #fff;
+        }
+
+        /* Color Slider */
+        #colorSlider {
+            background: linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet);
+            height: 8px;
+            border-radius: 5px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Particle Canvas */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+
+        /* Mobile Menu */
+        #mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #2b2525;
+            padding: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .movie-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            header .flex {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .search-bar {
+                font-size: 0.9rem;
+            }
+
+            .dropdown-menu {
+                width: 100%;
+            }
+
+            #mobile-menu {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .nav-links.active {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .movie-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-bar {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle Background -->
+    <canvas id="background-canvas"></canvas>
+
+    <!-- Header -->
+    <header>
+        <div class="container mx-auto px-4 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="{% url 'movie_list' %}" class="flex items-center space-x-2 text-decoration-none hover:scale-105 transition-transform duration-300">
+                <span class="text-4xl text-yellow-500">🎥</span>
+                <h1 class="text-3xl md:text-4xl font-bold uppercase tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-orange-500">
+                    Supe MovieTym
+                </h1>
+                <span class="text-4xl text-yellow-500">🎬</span>
+            </a>
+
+            <!-- Hamburger Menu -->
+            <button id="hamburger" class="md:hidden text-white focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+                </svg>
+            </button>
+
+            <!-- Navigation Links -->
+            <div class="nav-links flex items-center space-x-4">
+                <a href="{% url 'movie_list' %}" class="bg-{% if request.resolver_match.url_name == 'movie_list' %}orange-500{% else %}yellow-500{% endif %} text-white px-4 py-2 rounded-full font-medium hover:bg-orange-500 hover:scale-105 transition-all duration-300" aria-current="{% if request.resolver_match.url_name == 'movie_list' %}page{% endif %}">
+                    Movies
+                </a>
+                <a href="{% url 'series_list' %}" class="bg-{% if request.resolver_match.url_name == 'series_list' %}orange-500{% else %}yellow-500{% endif %} text-white px-4 py-2 rounded-full font-medium hover:bg-orange-500 hover:scale-105 transition-all duration-300" aria-current="{% if request.resolver_match.url_name == 'series_list' %}page{% endif %}">
+                    Series
+                </a>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden">
+                <a href="{% url 'movie_list' %}" class="block text-white px-4 py-2 hover:bg-orange-500 rounded" aria-current="{% if request.resolver_match.url_name == 'movie_list' %}page{% endif %}">
+                    Movies
+                </a>
+                <a href="{% url 'series_list' %}" class="block text-white px-4 py-2 hover:bg-orange-500 rounded" aria-current="{% if request.resolver_match.url_name == 'series_list' %}page{% endif %}">
+                    Series
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Bar -->
+    <nav class="container mx-auto px-4 py-4">
+        <form id="search-form" action="{% url 'movie_list' %}" method="get" class="flex justify-center items-center">
+            <div class="relative w-full max-w-lg">
+                <input type="text" name="query" value="{{ request.GET.query }}" placeholder="Search for movies or actors..." class="search-bar w-full focus:ring-2 focus:ring-yellow-500" aria-label="Search movies or actors">
+                <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-yellow-500 text-white px-4 py-1 rounded-full hover:bg-orange-500 transition-colors duration-300" aria-label="Submit search">
+                    🔍
+                </button>
+            </div>
+            <input type="hidden" id="selectedGenre" name="genre" value="{{ request.GET.genre }}">
+            <input type="hidden" id="selectedYear" name="year" value="{{ request.GET.year }}">
+            <input type="hidden" id="selectedLanguage" name="language" value="{{ request.GET.language }}">
+        </form>
+
+        <!-- Color Slider -->
+        <div class="flex justify-center mt-4">
+            <input id="colorSlider" type="range" min="0" max="360" step="1" class="w-48" aria-label="Change movie card color">
+        </div>
+    </nav>
+
+    <!-- Filters Section -->
+    <div class="container mx-auto px-4 flex justify-center gap-4 flex-wrap mb-6">
+        <!-- Genre Dropdown -->
+        <div class="relative" onmouseleave="hideDropdown('genreDropdown')">
+            <button class="bg-gray-600 text-white px-4 py-2 rounded-full hover:bg-gray-700 transition-colors duration-300" onclick="toggleDropdown('genreDropdown')" aria-expanded="false" aria-controls="genreDropdown">
+                {% if request.GET.genre %}Genre: {{ request.GET.genre }}{% else %}Genres{% endif %} ▼
+            </button>
+            <div id="genreDropdown" class="dropdown-menu hidden">
+                <button onclick="selectFilter('genre', '')" class="block w-full">All</button>
+                {% for genre in genres %}
+                    <button onclick="selectFilter('genre', '{{ genre }}')" class="block w-full">{{ genre }}</button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Year Dropdown -->
+        <div class="relative" onmouseleave="hideDropdown('yearDropdown')">
+            <button class="bg-gray-600 text-white px-4 py-2 rounded-full hover:bg-gray-700 transition-colors duration-300" onclick="toggleDropdown('yearDropdown')" aria-expanded="false" aria-controls="yearDropdown">
+                {% if request.GET.year %}Year: {{ request.GET.year }}{% else %}Year{% endif %} ▼
+            </button>
+            <div id="yearDropdown" class="dropdown-menu hidden">
+                <button onclick="selectFilter('year', '')" class="block w-full">All</button>
+                {% for year in unique_year %}
+                    <button onclick="selectFilter('year', '{{ year }}')" class="block w-full">{{ year }}</button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Language Dropdown -->
+        <div class="relative" onmouseleave="hideDropdown('languageDropdown')">
+            <button class="bg-gray-600 text-white px-4 py-2 rounded-full hover:bg-gray-700 transition-colors duration-300" onclick="toggleDropdown('languageDropdown')" aria-expanded="false" aria-controls="languageDropdown">
+                {% if request.GET.language %}Language: {{ request.GET.language }}{% else %}Language{% endif %} ▼
+            </button>
+            <div id="languageDropdown" class="dropdown-menu hidden">
+                <button onclick="selectFilter('language', '')" class="block w-full">All</button>
+                {% for language in languages %}
+                    <button onclick="selectFilter('language', '{{ language }}')" class="block w-full">{{ language }}</button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Actor Profile Section -->
+    {% if actor %}
+        <div class="container mx-auto px-4 mt-12 text-center">
+            <h2 class="text-3xl font-bold text-yellow-500">{{ actor }}</h2>
+            <p class="text-lg text-gray-300 mt-4">Actor information not available without DB.</p>
+        </div>
+    {% endif %}
+
+    <!-- Movie Grid -->
+    <div class="movie-grid container mx-auto">
+        {% for movie in page_obj %}
+            <div class="movie-card chosecolor">
+                {% if movie.imdb_id %}
+                    <a href="{% url 'movie_detail' imdb_id=movie.imdb_id %}" class="block text-decoration-none text-inherit">
+                {% else %}
+                    <a href="{% url 'movie_detail_tmdb' tmdb_id=movie.id %}" class="block text-decoration-none text-inherit">
+                {% endif %}
+                    <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-auto mb-4" loading="lazy">
+                    <h2 class="text-lg font-semibold text-gray-900 capitalize truncate">{{ movie.title }}</h2>
+                    <p class="text-base font-bold text-gray-800">{{ movie.release_date|slice:":4" }}</p>
+                    <p class="text-base text-gray-800 font-bold">Language: {{ movie.original_language }}</p>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination container mx-auto px-4 py-8 text-center flex justify-center gap-4 flex-wrap">
+        {% if current_page > 1 %}
+            <a href="?page=1&genre={{ request.GET.genre }}&year={{ request.GET.year }}&language={{ request.GET.language }}&query={{ request.GET.query }}">First</a>
+            <a href="?page={{ current_page|add:'-1' }}&genre={{ request.GET.genre }}&year={{ request.GET.year }}&language={{ request.GET.language }}&query={{ request.GET.query }}">Previous</a>
+        {% endif %}
+        <span class="text-lg font-medium">Page {{ current_page }} of {{ total_pages }}</span>
+        {% if current_page < total_pages %}
+            <a href="?page={{ current_page|add:'1' }}&genre={{ request.GET.genre }}&year={{ request.GET.year }}&language={{ request.GET.language }}&query={{ request.GET.query }}">Next</a>
+            <a href="?page={{ total_pages }}&genre={{ request.GET.genre }}&year={{ request.GET.year }}&language={{ request.GET.language }}&query={{ request.GET.query }}">Last</a>
+        {% endif %}
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        });
+
+        // Color Slider
+        function updateColorSlider(value) {
+            const color = `hsl(${value}, 100%, 50%)`;
+            document.querySelectorAll('.chosecolor').forEach(element => {
+                element.style.background = `linear-gradient(135deg, ${color}, ${color}cc)`;
+            });
+            localStorage.setItem('selectedColor', value);
+        }
+
+        window.addEventListener('load', () => {
+            const savedColor = localStorage.getItem('selectedColor');
+            if (savedColor) {
+                document.getElementById('colorSlider').value = savedColor;
+                updateColorSlider(savedColor);
+            }
+        });
+
+        // Dropdown Functions
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const isHidden = dropdown.style.display === 'none' || dropdown.style.display === '';
+            dropdown.style.display = isHidden ? 'block' : 'none';
+            dropdown.parentElement.querySelector('button').setAttribute('aria-expanded', isHidden);
+        }
+
+        function hideDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            dropdown.style.display = 'none';
+            dropdown.parentElement.querySelector('button').setAttribute('aria-expanded', 'false');
+        }
+
+        function selectFilter(type, value) {
+            document.getElementById('selected' + capitalizeFirstLetter(type)).value = value;
+            updateButtonDisplay(type, value);
+        }
+
+        function updateButtonDisplay(type, value) {
+            const buttonText = value || capitalizeFirstLetter(type);
+            const buttonElement = document.querySelector(`[onclick="toggleDropdown('${type}Dropdown')"]`);
+            buttonElement.innerText = `${capitalizeFirstLetter(type)}: ${buttonText} ▼`;
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Particle Animation
+        const canvas = document.getElementById('background-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = Array.from({ length: 50 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: Math.random() * 2 + 1,
+            speedX: (Math.random() - 0.5) * 0.5,
+            speedY: Math.random() * 0.5 + 0.1,
+        }));
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                p.x += p.speedX;
+                p.y += p.speedY;
+                if (p.y > canvas.height) p.y = -p.radius;
+                if (p.x < 0 || p.x > canvas.width) p.speedX = -p.speedX;
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
